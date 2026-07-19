@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détail de la tâche - To-Do List</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+
+<body class="task-list-page">
+
+<div class="container-fluid px-2 px-md-3">
+    <div class="header">
+        <h1>To-Do List</h1>
+    </div>
+
+    <div class="main-content">
+
+        <div class="row align-items-start g-3">
+
+            <div class="col-12 col-lg-8">
+
+                <div class="task-detail-section">
+
+                    <div class="task-info" th:if="${task != null}">
+
+                        <h2 class="task-title"
+                            th:classappend="${task.deadline != null and task.deadline.isBefore(T(java.time.LocalDateTime).now())} ? 'text-danger' : ''"
+                            th:text="${task.title}">
+                        </h2>
+
+                        <p class="task-description"
+                           th:text="${task.taskDescription}">
+                        </p>
+
+                        <div class="task-deadline"
+                             th:classappend="${task.deadline != null and task.deadline.isBefore(T(java.time.LocalDateTime).now())} ? 'text-danger' : ''">
+                            <strong>Deadline:</strong>
+                            <span th:text="${task.deadline}"></span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <div class="task-actions">
+                    <div class="d-flex flex-column gap-2">
+
+                        <button class="btn btn-mark-done"
+                                th:if="${task.isDone == false}"
+                                th:onclick="|window.location.href='@{/tasks/{id}/done(id=${task.id})}'|">
+                            <i class="fas fa-check"></i> Fait
+                        </button>
+
+                        <button class="btn btn-edit-task"
+                                th:onclick="|window.location.href='@{/tasks/{id}/edit(id=${task.id})}'|">
+                            <i class="fas fa-edit"></i> Modifier
+                        </button>
+
+                        <form th:action="@{/tasks/delete/{id}(id=${task.id})}" method="post">
+                            <button type="submit" class="btn btn-delete-task">
+                                <i class="fas fa-trash"></i> Supprimer
+                            </button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="return-link mt-4">
+            <a th:href="@{/}" class="btn btn-return">
+                <i class="fas fa-arrow-left"></i> Retour à la liste des tâches
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

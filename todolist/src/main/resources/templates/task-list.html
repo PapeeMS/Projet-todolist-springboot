@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+
+<body class="task-list-page">
+
+    <div class="notification">Continue comme ça, tu fais du bon travail!</div>
+
+    <div class="container-fluid px-2 px-md-3">
+
+        <div class="header row align-items-center g-3 g-md-0">
+            <div class="col-12 col-md-auto">
+                <h1>To-Do List</h1>
+            </div>
+
+            <div class="col-12 col-md-auto">
+                <p class="mb-0 ms-5">
+                    Bienvenue, <span th:text="${username}">Utilisateur</span> !
+                </p>
+            </div>
+
+            <div class="col-12 col-md-auto ms-md-auto d-flex flex-column flex-sm-row gap-2">
+                <form th:action="@{/logout}" method="post" class="m-0">
+                    <button type="submit" class="btn btn-logout">
+                        <i class="fas fa-sign-out-alt"></i> Déconnexion
+                    </button>
+                </form>
+
+                <a class="btn btn-add-task" th:href="@{/tasks/add}">
+                    <i class="fas fa-plus"></i> Ajouter une tâche
+                </a>
+            </div>
+        </div>
+
+        <div class="main-content mt-3">
+
+            <h2>Tâches à faire</h2>
+
+            <div class="task-section">
+                <div class="task-card" th:each="task : ${tasks}" th:if="${task.isDone == false}">
+                    <div class="row align-items-start g-3">
+
+                        <div class="col-12 col-md-8">
+                            <a class="task-title"
+                               th:href="@{/tasks/{id}(id=${task.id})}"
+                               th:text="${task.title}">
+                            </a>
+
+                            <div class="task-deadline">
+                                Deadline: <span th:text="${task.deadline}"></span>
+
+                                <span class="badge bg-danger ms-2"
+                                      th:if="${task.deadline != null and task.deadline.isBefore(T(java.time.LocalDateTime).now())}">
+                                    <i class="fas fa-exclamation-triangle"></i> En retard
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-4">
+                            <div class="task-actions d-flex flex-column flex-sm-row gap-2">
+                                <button class="btn btn-mark-done btn-sm"
+                                        th:onclick="|window.location.href='@{/tasks/{id}/done(id=${task.id})}'|">
+                                    <i class="fas fa-check"></i> Fait
+                                </button>
+
+                                <button class="btn btn-edit btn-sm"
+                                        th:onclick="|window.location.href='@{/tasks/{id}/edit(id=${task.id})}'|">
+                                    Modifier
+                                </button>
+
+                                <form th:action="@{/tasks/delete/{id}(id=${task.id})}" method="post">
+                                    <button type="submit" class="btn btn-delete-task">
+                                        Supprimer
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="mt-5">Tâches terminées</h2>
+
+            <div class="task-section">
+                <div class="task-card completed" th:each="task : ${tasks}" th:if="${task.isDone == true}">
+                    <div class="row align-items-start g-3">
+
+                        <div class="col-12 col-md-8">
+                            <a class="task-title"
+                               th:href="@{/tasks/{id}(id=${task.id})}"
+                               th:text="${task.title}">
+                            </a>
+
+                            <div class="task-deadline">
+                                Deadline: <span th:text="${task.deadline}"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-4">
+                            <div class="task-actions d-flex gap-2">
+                                <form th:action="@{/tasks/delete/{id}(id=${task.id})}" method="post">
+                                    <button type="submit" class="btn btn-delete-task btn-sm">
+                                        Supprimer
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        setTimeout(() => {
+            const notification = document.querySelector('.notification');
+            if (notification) {
+                notification.style.display = "none";
+            }
+        }, 3000);
+    </script>
+
+</body>
+</html>
